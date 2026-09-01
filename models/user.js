@@ -33,6 +33,37 @@ async function findOneByUsername(username) {
   }
 }
 
+async function findOneById(userId) {
+  const userFound = await runSelectQuery(userId);
+
+  return userFound;
+
+  async function runSelectQuery(userId) {
+    const results = await database.query({
+      text: `
+      SELECT
+      *
+      FROM
+        users
+      WHERE
+        id = $1
+      LIMIT
+      1
+      ;`,
+      values: [userId],
+    });
+
+    if (results.rowCount === 0) {
+      throw new NotFoundError({
+        message: "O id informado não foi encontrado no sistema.",
+        action: "Verifique se o id está digitado corretamente.",
+      });
+    }
+
+    return results.rows[0];
+  }
+}
+
 async function findOneByEmail(email) {
   const userFound = await runSelectQuery(email);
   return userFound;
@@ -54,8 +85,9 @@ async function findOneByEmail(email) {
 
     if (results.rowCount === 0) {
       throw new NotFoundError({
-        message: "O email informado não foi encontrado.",
-        action: "Verifique se o email está digitado corretamente.",
+        message: "Usuário não possui sessão ativa",
+        action: "Verifique se este usuário está logado e tente novamente",
+        status_code: 401,
       });
     }
 
@@ -187,6 +219,7 @@ async function hashPasswordInObject(userInputValues) {
 
 const user = {
   create,
+  findOneById,
   findOneByUsername,
   findOneByEmail,
   update,
