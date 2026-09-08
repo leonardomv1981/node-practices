@@ -124,10 +124,6 @@ describe("GET /api/v1/user", () => {
         action: "Verifique se este usuário está logado e tente novamente",
         status_code: 401,
       });
-
-      // expect(uuidVersion(responseBody.id)).toBe(4);
-      // expect(Date.parse(responseBody.created_at)).not.toBeNaN();
-      // expect(Date.parse(responseBody.updated_at)).not.toBeNaN();
     });
   });
 });
